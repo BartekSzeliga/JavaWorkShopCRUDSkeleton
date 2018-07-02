@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/workshop")
@@ -23,17 +24,17 @@ public class WorkshopController {
     }
 
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Workshop getWorkshop(@PathVariable(value = "id") String id) {
+    public Optional<Workshop> getWorkshop(@PathVariable(value = "id") String id) {
         return workshopService.getWorkshopById(id);
     }
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
-    public List<Workshop> getAllUpSkill() {
-        return workshopService.getAllWorshop();
+    public List<Workshop> getAllWorkshop() {
+        return workshopService.getAllWorkshop();
     }
 
     @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public Workshop updateWorkshop(@PathVariable(value = "id") String id, @RequestBody final Workshop workshop) {
+    public Optional<Workshop> updateWorkshop(@PathVariable(value = "id") String id, @RequestBody final Workshop workshop) {
         return workshopService.updateWorkshop(id, workshop);
     }
 
@@ -42,8 +43,4 @@ public class WorkshopController {
         workshopService.deleteWorkshopById(id);
     }
 
-    @PutMapping(value = "insertRows/{numberOfRows}", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public void insertRows(@PathVariable(value = "numberOfRows") Integer numberOfRows) {
-         workshopService.insertRows(numberOfRows);
-    }
 }
