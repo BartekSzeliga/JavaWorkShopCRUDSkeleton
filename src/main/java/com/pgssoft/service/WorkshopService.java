@@ -17,7 +17,7 @@ public class WorkshopService {
     }
 
     public Optional<Workshop> getWorkshopById(final String id) {
-        return Optional.ofNullable(id).map(s -> workshopRepository.findById(s)).orElse(null);
+        return Optional.ofNullable(id).flatMap(s -> workshopRepository.findById(s));
     }
 
     public List<Workshop> getAllWorkshop() {
@@ -28,23 +28,27 @@ public class WorkshopService {
         return workshopRepository.save(workshop);
     }
 
-    public Optional<Workshop> updateWorkshop(String id, final Workshop workshop) {
-
-        return Optional.ofNullable(id).map(projectId ->
-                workshopRepository.findById(id).map(original -> {
-                    Optional.ofNullable(workshop.getNumber()).ifPresent(original::setNumber);
-                    Optional.ofNullable(workshop.getOffice()).ifPresent(original::setOffice);
-                    Optional.ofNullable(workshop.getParticipantsNumber()).ifPresent(original::setParticipantsNumber);
-                    Optional.ofNullable(workshop.getPresenter()).ifPresent(original::setPresenter);
-                    Optional.ofNullable(workshop.getRoom()).ifPresent(original::setRoom);
-                    Optional.ofNullable(workshop.isRemote()).ifPresent(original::setRemote);
-                    return original;
-                }).map(workshopRepository::save)).orElse(null);
+    public Workshop updateWorkshop(String id, final Workshop workshop) {
+        workshop.setId(id);
+        return workshopRepository.save(workshop);
     }
 
     public void deleteWorkshopById(final String id) {
         Optional.ofNullable(id).ifPresent(workshopId -> workshopRepository.deleteById(workshopId));
     }
 
+    public Optional<Workshop> addParticipant(String id, String participant) {
+        return workshopRepository.findById(id).map(original -> {
+            original.getParticipants().add(participant);
+            return original;
+        }).map(workshopRepository::save);
+    }
 
+
+    public Optional<Workshop> deleteParticipant(String id, String participant) {
+        return workshopRepository.findById(id).map(original -> {
+            original.getParticipants().remove(participant);
+            return original;
+        }).map(workshopRepository::save);
+    }
 }
